@@ -61,3 +61,77 @@ library(sqldf)
 # install.packages("sqldf")
 ?sqldf
 newdata<- sqldf("select * from mtcars order by mpg",row.names=T)
+
+
+# Advanced data management
+
+
+?option
+# Challenge
+# You want to combine these scores in order to determine a single performance
+# indicator for each student. Additionally, you want to assign an A to the top
+# 20% of students, a B to the next 20%, and so on. Finally, you want to sort the
+# students alphabetically.
+
+
+
+
+options(digits=2)
+Student <- c("John Davis", "Angela Williams", "Bullwinkle Moose",
+             "David Jones", "Janice Markhammer", "Cheryl Cushing",
+             "Reuven Ytzrhak", "Greg Knox", "Joel England",
+             "Mary Rayburn")
+Math <- c(502, 600, 412, 358, 495, 512, 410, 625, 573, 522)
+Science <- c(95, 99, 80, 82, 75, 85, 80, 95, 89, 86)
+English <- c(25, 22, 18, 15, 20, 28, 15, 30, 27, 18)
+roster<-data.frame(Student,Math,Science,English,stringsAsFactors = F)
+
+
+# Scale the datadata and get the performance metric
+z<-scale(roster[,2:4])
+score<-apply(z,1,mean)
+roster<-mutate(roster,score=score)
+y<-quantile(score,probs=c(0.8,0.6,0.4,0.2))
+roster<-within(roster,{
+    grade<-NA
+    grade[score>=y[1]]<-'A'
+    grade[score>=y[2] &score<y[1]]<-'B'
+    grade[score>=y[3] & score<y[2]]<-'C'
+    grade[score>=y[4] & score<y[3]]<-'D'
+    grade[score<y[4]]<-'F'
+})
+
+names<- strsplit(roster$Student," ")
+FirstName<-sapply(names,"[", 1)
+LastName<-sapply(names,"[", 2)
+# roster<-mutate(roster,FirstName)
+# roster<-mutate(roster,LastName)
+roster<-cbind(FirstName,LastName,roster[,-1])
+roster<-roster[,-c(8,9)]
+roster<-arrange(roster,FirstName)
+
+?sapply
+# awkward to use
+
+# roster<-within(roster,{
+#     grade<-NA
+#     if(score>=y[1]) {
+#         grade<-'A'
+#     } else if(score>=y[2] & score<y[1]){
+#         grade<-'B'
+#     }else if(score>=y[3] & score<y[2]){
+#         grade<-'C'
+#     } else if (score>=y[4] & score<y[3]) {
+#         grade <-'D'
+#     } else {
+#         grade<-'F'
+#     }
+# })
+
+
+
+
+
+
+
+

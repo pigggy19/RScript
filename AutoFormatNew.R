@@ -47,7 +47,13 @@ Output2<-Output2%>%mutate(countOfModule=paste("Module",sequence(n()))) #####n() 
 
 #spread training module column into three modules rows
 Output2<-Output2%>%spread(countOfModule,Module_Title)
+# add indicator column to the table & fill in indicator
 Output2<-mutate(Output2,Indicator="")
+#The column to remove depends on what is the max number of modules participants have taken. The geneneral
+# is keep 3 modules only.
+Output2<-Output2%>%select(-c(8:12))
+Output2$Indicator <- apply(Output2,1, function(x) sum(!is.na(x[5:7])))
+
 Output2<-Output2%>%select(-c(9:13))
 ?spread
 

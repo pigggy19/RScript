@@ -248,9 +248,22 @@ heatmap(mt)
 #########  KMeans Clustering   ###########################
 
 
+fileName <- "script.txt"
+?file
+conn <- file(fileName,open="r")
+
+textTest <-readLines(conn)
+for (i in 1:length(textTest)){
+    print(textTest[i])
+}
+close(conn)
+?grep
 
 
+appendText<-textTest[-grep(":",textTest,ignore.case = T)]
 
-
+fileConn<-file("script.txt",open="a")
+writeLines(appendText, fileConn)
+close(fileConn)
 
 
